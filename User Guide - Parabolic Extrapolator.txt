@@ -1,0 +1,29 @@
+------------------ User Guide -------------
+
+This code contains an extrapolator for tracks at the LHCb using LHCb's dynamic magnetic field. 
+This code is designed to primarily be used with Monte Carlo tracks. 
+
+-- Initially, you import the root file into Python and extract its arrays into individual Python arrays. If you have new arrays of information to add, just use "tracks.keys()" to determine the name of the new lists. 
+
+-- The code currently is set to filter through momentum regions only. You can add more filters by using the AND statement inside the IF commands for the individual arrays in the third cell. 
+
+-- This code reads a field map of the LHCb magnetic field. If you want to use your own magnetic field, feel free to do so. Just change m_B to read your new field in the propagator function. 
+
+-- The code is currently set up to extract initial conditions from the root file using "r" as index. You can change the initial conditions to anything you like.
+
+-- We need to retrieve the x-coordinates for UT and SciFi strips because we only have minimum and maximum y-values in the root file. We use the simple equation of a straight line to obtain the minimum and maximum x-coordinates. 
+
+-- The propagator uses equations from the following document: https://cds.cern.ch/record/1070314/files/lhcb-2007-140.pdf
+
+-- If you want to use the interpolator for more precise magnetic field measurement, just comment out the current m_B line and uncomment the four lines above it.
+
+-- The plot_tracks function just combines the true trajectory, hits, and the extrapolator's trajectory into one plot. 
+
+-- "Label" just means the name on the legend. You can change it as you wish. 
+
+-- The item.set_fontsize() function just changes the font sizes for axes and titles. 
+
+-- We need to use the propagator function through different points in space to obtain the trajectory that we need. Currently, the code only goes from z= 0 to 12000 mm in three increments. You can change it to suit your needs. 
+
+
+
