@@ -1,0 +1,50 @@
+class Field_xy {
+public:
+  double Bx[81][71],By[81][71],Bz[81][71];
+  Field_xy() {}
+  ~Field_xy() {}
+};
+Field_xy field_xy[121];
+/****************************************************************************************************************************************/
+void B_xyz(double x, double y, double z, double& B_x, double& B_y, double& B_z) {
+  if(fabs(x)>3999||fabs(y)>3499||z<-499||z>=11399) {
+    B_x = B_y = B_z = 0;
+    return;
+  }
+  int ix,iy,iz;
+  ix = (x+4000)/100;
+  iy = (y+3500)/100;
+  iz = (z+ 500)/100;
+  if(iz>119) iz = 119;
+  double dx = (x+4000)/100-ix; double ex = 1-dx;
+  double dy = (y+3500)/100-iy; double ey = 1-dy;
+  double dz = (z+ 500)/100-iz; double ez = 1-dz;
+
+  B_x = dx*(dy*(dz*field_xy[iz+1].Bx[ix+1][iy+1]+ez*field_xy[iz].Bx[ix+1][iy+1])+ey*(dz*field_xy[iz+1].Bx[ix+1][iy  ]+ez*field_xy[iz].Bx[ix+1][iy]))+
+        ex*(dy*(dz*field_xy[iz+1].Bx[ix  ][iy+1]+ez*field_xy[iz].Bx[ix  ][iy+1])+ey*(dz*field_xy[iz+1].Bx[ix  ][iy  ]+ez*field_xy[iz].Bx[ix  ][iy]));
+  B_y = dx*(dy*(dz*field_xy[iz+1].By[ix+1][iy+1]+ez*field_xy[iz].By[ix+1][iy+1])+ey*(dz*field_xy[iz+1].By[ix+1][iy  ]+ez*field_xy[iz].By[ix+1][iy]))+
+        ex*(dy*(dz*field_xy[iz+1].By[ix  ][iy+1]+ez*field_xy[iz].By[ix  ][iy+1])+ey*(dz*field_xy[iz+1].By[ix  ][iy  ]+ez*field_xy[iz].By[ix  ][iy]));
+  B_z = dx*(dy*(dz*field_xy[iz+1].Bz[ix+1][iy+1]+ez*field_xy[iz].Bz[ix+1][iy+1])+ey*(dz*field_xy[iz+1].Bz[ix+1][iy  ]+ez*field_xy[iz].Bz[ix+1][iy]))+
+        ex*(dy*(dz*field_xy[iz+1].Bz[ix  ][iy+1]+ez*field_xy[iz].Bz[ix  ][iy+1])+ey*(dz*field_xy[iz+1].Bz[ix  ][iy  ]+ez*field_xy[iz].Bz[ix  ][iy]));
+}
+/***************************************************************************************************************************/
+void ReadField(char *name)
+{
+  FILE *map;
+  double x,y,z,bx,by,bz;
+  map = fopen(name,"r");
+  int npt = 0;
+  while(fscanf(map,"%lf %lf %lf %lf %lf %lf",&x,&y,&z,&bx,&by,&bz)==6) {
+    if(fabs(x)>4000||fabs(y)>3500) continue;
+    int ix = (x+4001)/100;
+    int iy = (y+3501)/100;
+    int iz = (z+ 501)/100;
+    if(ix<0||ix>80||iy<0||iy>70) continue;
+    if(iz>120) break;
+    field_xy[iz].Bx[ix][iy] = bx;
+    field_xy[iz].By[ix][iy] = by;
+    field_xy[iz].Bz[ix][iy] = bz;
+    npt++;
+  }
+  fclose(map);
+}
